@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalender Weton Realtime</title>
+
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #022721, #022721);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .card {
+        background-color: #ffffff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        text-align: center;
+    }
+
+    .card h1 {
+        margin-bottom: 25px;
+        color: #333;
+    }
+
+    .jam {
+        font-size: 36px;
+        font-weight: bold;
+        color: #4CAF50;
+    }
+
+    .tanggal {
+        margin-top: 15px;
+        font-size: 18px;
+        color: #555;
+    }
+
+    .weton {
+        margin-top: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Kalender Weton</h1>
+    <div class="jam" id="jam"></div>
+    <div class="tanggal" id="tanggal"></div>
+    <div class="weton" id="weton"></div>
+ 
+</div>
+
+<script>
+function updateWaktu() {
+
+    const hariList = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+    const pasaranList = ["Legi","Pahing","Pon","Wage","Kliwon"];
+
+    const sekarang = new Date();
+
+    // ======================
+    // JAM REALTIME
+    // ======================
+    const jam = String(sekarang.getHours()).padStart(2,'0');
+    const menit = String(sekarang.getMinutes()).padStart(2,'0');
+    const detik = String(sekarang.getSeconds()).padStart(2,'0');
+
+    document.getElementById("jam").innerHTML =
+        jam + ":" + menit + ":" + detik;
+
+    // ======================
+    // TANGGAL
+    // ======================
+    const tanggalFull = sekarang.toLocaleDateString("id-ID", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+
+    document.getElementById("tanggal").innerHTML = tanggalFull;
+
+    // ======================
+    // WETON (Referensi Valid)
+    // 17 Agustus 1945 = Jumat Legi
+    // ======================
+    const referensi = new Date(1945, 7, 17);
+    const referensiPasaranIndex = 0; // Legi
+
+    const selisihHari = Math.floor(
+        (sekarang - referensi) / (1000 * 60 * 60 * 24)
+    );
+
+    let indexPasaran = (referensiPasaranIndex + selisihHari) % 5;
+
+    if (indexPasaran < 0) {
+        indexPasaran += 5;
+    }
+
+    const hari = hariList[sekarang.getDay()];
+    const pasaran = pasaranList[indexPasaran];
+
+    document.getElementById("weton").innerHTML =
+        "Weton: " + hari + " " + pasaran;
+}
+
+setInterval(updateWaktu, 1000);
+updateWaktu();
+</script>
+
+</body>
+</html>
